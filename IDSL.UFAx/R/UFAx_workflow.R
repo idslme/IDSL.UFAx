@@ -1,6 +1,6 @@
 UFAx_workflow <- function(spreadsheet) {
   ##
-  exhaustive_chemical_enumeration_annotated_table <- c()
+  exhaustive_chemical_enumeration_annotated_table <- NULL
   gc()
   initiation_time <- Sys.time()
   message("Initiated testing the spreadsheet consistency!")
@@ -435,12 +435,12 @@ UFAx_workflow <- function(spreadsheet) {
       ##########################################################################
       get_formula_mz <- function(query_mz, qvec, carbon_masses, atom_vec, mass_accuracy) {
         ##
-        set_1 <- comboGeneral(qvec,1,FALSE,constraintFun = "sum",
+        set_1 <- comboGeneral(qvec, 1, FALSE, constraintFun = "sum",
                               comparisonFun = c(">=","<="),
                               limitConstraints = c((query_mz - mass_accuracy), (query_mz + mass_accuracy)),
                               keepResults = TRUE)
         
-        set_2 <- comboGeneral(qvec,2,FALSE,constraintFun = "sum",
+        set_2 <- comboGeneral(qvec, 2, FALSE, constraintFun = "sum",
                               comparisonFun = c(">=","<="),
                               limitConstraints = c((query_mz - mass_accuracy), (query_mz + mass_accuracy)),
                               keepResults = TRUE)
@@ -449,7 +449,7 @@ UFAx_workflow <- function(spreadsheet) {
         set_2_a[set_2_a %in% carbon_masses] <- 1
         set_2 <- set_2[which(rowSums(set_2_a) > 0),]
         
-        set_3 <- comboGeneral(qvec,3,FALSE,constraintFun = "sum",
+        set_3 <- comboGeneral(qvec, 3, FALSE, constraintFun = "sum",
                               comparisonFun = c(">=","<="),
                               limitConstraints = c((query_mz - mass_accuracy), (query_mz + mass_accuracy)),
                               keepResults = TRUE)
@@ -458,7 +458,7 @@ UFAx_workflow <- function(spreadsheet) {
         set_3_a[set_3_a %in% carbon_masses] <- 1
         set_3 <- set_3[which(rowSums(set_3_a) > 0),]
         
-        set_4 <- comboGeneral(qvec,4,FALSE,constraintFun = "sum",
+        set_4 <- comboGeneral(qvec, 4, FALSE, constraintFun = "sum",
                               comparisonFun = c(">=","<="),
                               limitConstraints = c((query_mz - mass_accuracy), (query_mz + mass_accuracy)),
                               keepResults = TRUE)
@@ -467,7 +467,7 @@ UFAx_workflow <- function(spreadsheet) {
         set_4_a[set_4_a %in% carbon_masses] <- 1
         set_4 <- set_4[which(rowSums(set_4_a) > 0),]
         
-        set_5 <- comboGeneral(qvec,5,FALSE,constraintFun = "sum",
+        set_5 <- comboGeneral(qvec, 5, FALSE, constraintFun = "sum",
                               comparisonFun = c(">=","<="),
                               limitConstraints = c((query_mz - mass_accuracy), (query_mz + mass_accuracy)),
                               keepResults = TRUE)
@@ -476,7 +476,7 @@ UFAx_workflow <- function(spreadsheet) {
         set_5_a[set_5_a %in% carbon_masses] <- 1
         set_5 <- set_5[which(rowSums(set_5_a) > 0),]
         
-        set_6 <- comboGeneral(qvec,6,FALSE,constraintFun = "sum",
+        set_6 <- comboGeneral(qvec, 6, FALSE, constraintFun = "sum",
                               comparisonFun = c(">=","<="),
                               limitConstraints = c((query_mz - mass_accuracy), (query_mz + mass_accuracy)),
                               keepResults = TRUE)
@@ -486,7 +486,7 @@ UFAx_workflow <- function(spreadsheet) {
         set_6 <- set_6[which(rowSums(set_6_a) > 0), ]
         ##
         get_formula_text <- function(sety) {
-          if (is.matrix(sety) == F) {
+          if (is.matrix(sety) == FALSE) {
             sety <- t(as.matrix(sety))
           }
           if (nrow(sety) > 0) {
@@ -503,7 +503,7 @@ UFAx_workflow <- function(spreadsheet) {
       }
       ##########################################################################
       exhaustive_chemical_enumeration_call <- "exhaustive_chemical_enumeration_call <- function (i_mz) {
-        ex_chem_enum_spa_annontated_table <- c()
+        ex_chem_enum_spa_annontated_table <- NULL
         ##
         query_mz <- as.numeric(peaklist[i_mz, 8])
         R13C_PL <- as.numeric(peaklist[i_mz, 11])
@@ -626,7 +626,7 @@ UFAx_workflow <- function(spreadsheet) {
                   RangeScan <- peaklist[i_mz, 1]:peaklist[i_mz, 2]
                   NumberScans <- length(RangeScan)
                   mzList2 <- do.call(rbind, lapply(1:L_x_in_range, function(j) {
-                    A <- c()
+                    A <- NULL
                     IsotopicProfile <- IsotopicProfile_DataBase[[j]]
                     size_IP <- SizeIP_IsotopicProfile_DataBase[j]
                     MW_exp <- matrix(rep(0, size_IP*NumberScans), ncol = NumberScans)
@@ -760,7 +760,7 @@ UFAx_workflow <- function(spreadsheet) {
       ##
       exhaustive_chemical_enumeration_annotated_table <- data.frame(exhaustive_chemical_enumeration_annotated_table)
       colnames(exhaustive_chemical_enumeration_annotated_table) <- c("PeakID", "sizeIP", "FormulaIon", "m/z Isotopic Profile", "m/z peaklist", "RT", "PeakHeight", "NEME (mDa)", "PCS", "R13C peakList", "R13C Isotopic Profile", "NDCS", "RCS (%)", "Rank")
-      rownames(exhaustive_chemical_enumeration_annotated_table) <- c()
+      rownames(exhaustive_chemical_enumeration_annotated_table) <- NULL
       if (tolower(ECE0034) == "yes") {
         message("Initiated searching in the library of molecular formula!!!")
         MF_library <- IDSL.IPA::loadRdata(PubChem_library_path)
