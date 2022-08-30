@@ -8,7 +8,7 @@
 [![Dependencies](https://tinyverse.netlify.com/badge/IDSL.UFAx)](https://cran.r-project.org/package=IDSL.UFAx)
 <!-- badges: end -->
 
-A pipeline to annotate a number of peaks from the IDSL.IPA peaklists using an exhaustive chemical enumeration-based approach. This package can perform elemental composition calculations using the following 15 elements : C, B, Br, Cl, K, S, Se, Si, N, H, As, F, I, Na, O, and P.
+A pipeline to annotate a number of peaks from the [**IDSL.IPA**](https://github.com/idslme/IDSL.IPA) peaklists using an exhaustive chemical enumeration-based approach. This package can perform elemental composition calculations using the following 15 elements : C, B, Br, Cl, K, S, Se, Si, N, H, As, F, I, Na, O, and P.
 
 	install.packages("IDSL.UFAx")
 
