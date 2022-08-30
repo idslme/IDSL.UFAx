@@ -23,7 +23,9 @@ IDSL.UFAx applies a hursitic approach to enumerate vast chemical spaces (<10<sup
 ## Workflow
 To annotate your mass spectrometry data (**mzXML**, **mzML**, **netCDF**), mass spectrometry data should be processed using the [IDSL.IPA](https://github.com/idslme/IDSL.IPA) workflow to acquire chromatographic information of the peaks (***m/z-RT***). When the chromatographic information of individual peaklists were generated using the [IDSL.IPA](https://github.com/idslme/IDSL.IPA) workflow, download the [UFAx parameter spreadsheet](https://raw.githubusercontent.com/idslme/IDSL.UFAx/main/UFAx_parameters.xlsx) and fill out the parameters accordingly and then use this spreadsheet as the input for the IDSL.UFAx workflow:
 
-	UFAx_workflow("Address of the UFAx parameter spreadsheet")
+		library(IDSL.UFA)
+		library(IDSL.UFAx)
+		UFAx_workflow("Address of the UFAx parameter spreadsheet")
 
 Visit https://ufa.idsl.me/enumerating-chemical-space/exhaustive-enumeration for the detailed documentation and tutorial.
 
