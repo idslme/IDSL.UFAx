@@ -13,7 +13,7 @@ A pipeline to annotate a number of peaks from the IDSL.IPA peaklists using an ex
 	install.packages("IDSL.UFAx")
 
 
-**Note:** The IDSL.UFAx package has a dependency on RcppAlgos and gmp R packages. In some instance to install these two packages, you may need to run the following command on a linux terminal
+**Note:** The IDSL.UFAx package has a dependency on [RcppAlgos](https://github.com/jwood000/RcppAlgos) and gmp R packages. In some instance to install these two packages, you may need to run the following command on a linux terminal
 
 	sudo apt-get install libgmp-dev
 
