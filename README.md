@@ -18,7 +18,7 @@ A pipeline to annotate a number of peaks from the IDSL.IPA peaklists using an ex
 	sudo apt-get install libgmp-dev
 
 ## Ultra exhaustive enumeration
-IDSL.UFAx employ a hursitic approach to enumerate vast chemical spaces (<10<sup>27</sup> molecular formulas). Although, UFAx approach is computationally expensive, it is very suitable for elemental composition of unknown peaks when the chemical space is unidentifiable.
+IDSL.UFAx applies a hursitic approach to enumerate vast chemical spaces (<10<sup>27</sup> molecular formulas). Although, UFAx approach is computationally expensive, it is very suitable for elemental composition of unknown peaks when the chemical space is unidentifiable.
 
 ## Workflow
 To annotate your mass spectrometry data (**mzXML**, **mzML**, **netCDF**), mass spectrometry data should be processed using the [IDSL.IPA](https://github.com/idslme/IDSL.IPA) workflow to acquire chromatographic information of the peaks (***m/z-RT***). When the chromatographic information of individual peaklists were generated using the [IDSL.IPA](https://github.com/idslme/IDSL.IPA) workflow, download the [UFAx parameter spreadsheet](https://raw.githubusercontent.com/idslme/IDSL.UFAx/main/UFAx_parameters.xlsx) and fill out the parameters accordingly and then use this spreadsheet as the input for the IDSL.UFAx workflow:
