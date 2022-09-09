@@ -30,7 +30,8 @@ temp_wd <- tempdir() # update this address
 temp_wd_zip <- paste0(temp_wd,"/003.mzML_UFAx_testfiles.zip")
 spreadsheet <- readxl::read_xlsx(SSh1)
 download.file(
-  "https://raw.githubusercontent.com/idslme/IDSL.UFAx/main/003.mzML_UFAx_testfiles.zip",
+  paste0("https://raw.githubusercontent.com/idslme/IDSL.UFAx/",
+  "UFAx_educational_files/003.mzML_UFAx_testfiles.zip"),
   destfile = temp_wd_zip)
 unzip(temp_wd_zip, exdir = temp_wd)
 spreadsheet[1, 4] <- temp_wd

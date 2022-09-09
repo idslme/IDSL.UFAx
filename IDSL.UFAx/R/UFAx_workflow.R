@@ -90,7 +90,7 @@ UFAx_workflow <- function(spreadsheet) {
     output_path <- gsub("\\", "/", PARAM_ECE[x0006, 2], fixed = TRUE)
     PARAM_ECE[x0006, 2] <- output_path
     if (!dir.exists(output_path)) {
-      tryCatch(dir.create(output_path), warning = function(w){message("WARNING!!! Problem with ECE0006! R can only create one folder!")})
+      tryCatch(dir.create(output_path, recursive = TRUE), warning = function(w){warning("Problem with ECE0006! R cannot create the folder!")})
       if (!dir.exists(output_path)) {
         checkpoint_parameter <- FALSE
       }
@@ -285,8 +285,8 @@ UFAx_workflow <- function(spreadsheet) {
     }
     ##
     UFA_IP_memeory_variables <- tryCatch(eval(parse(text = paste0("c(", PARAM_ECE[which(PARAM_ECE[, 1] == 'ECE0024'), 2], ")"))), error = function(e){NULL})
-    if (length(UFA_IP_memeory_variables) != 2) {
-      message("ERROR!!! Problem with ECE0024! This parameter should be a vector of two positive numbers!")
+    if (length(UFA_IP_memeory_variables) != 3) {
+      message("ERROR!!! Problem with ECE0024! This parameter should be a vector of three positive numbers!")
       checkpoint_parameter <- FALSE
     }
     ##
@@ -720,12 +720,12 @@ UFAx_workflow <- function(spreadsheet) {
       exhaustive_chemical_enumeration_call <- gsub("int_cutoff_str", int_cutoff_str, exhaustive_chemical_enumeration_call)
       eval(parse(text = exhaustive_chemical_enumeration_call))
       ##########################################################################
-      outputer003 <- IDSL.IPA::IPA_MSdeconvoluter(HRMS_path = mass_spec_file, MSfile = "")
-      spectraList <- outputer003[[1]]
+      outputer <- IDSL.IPA::IPA_MSdeconvoluter(HRMS_path = mass_spec_file, MSfile = "")
+      spectraList <- outputer[["spectraList"]]
       ## Creating the log folder
       output_path_log <- paste0(output_path, "/log_ECE_annotation_", ECE0005, "/")
       if (!dir.exists(output_path_log)) {
-        tryCatch(dir.create(output_path_log), warning = function(w){stop("Can't create the log folder!!!")})
+        tryCatch(dir.create(output_path_log, recursive = TRUE), warning = function(w){stop("Can't create the log folder!!!")})
       }
       ##
       message("Initiated the exhaustive chemical enumeration analysis!!!")
