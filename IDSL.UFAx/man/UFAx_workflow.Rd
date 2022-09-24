@@ -30,14 +30,14 @@ temp_wd <- tempdir() # update this address
 temp_wd_zip <- paste0(temp_wd,"/003.mzML_UFAx_testfiles.zip")
 spreadsheet <- readxl::read_xlsx(SSh1)
 download.file(
-  paste0("https://raw.githubusercontent.com/idslme/IDSL.UFAx/",
-  "UFAx_educational_files/003.mzML_UFAx_testfiles.zip"),
-  destfile = temp_wd_zip)
+paste0("https://github.com/idslme/IDSL.UFAx/blob/main/UFAx_educational_files/",
+         "003.mzML_UFAx_testfiles.zip?raw=true"),
+destfile = temp_wd_zip)
 unzip(temp_wd_zip, exdir = temp_wd)
 spreadsheet[1, 4] <- temp_wd
 spreadsheet[4, 4] <- temp_wd
 spreadsheet[6, 4] <- temp_wd
-spreadsheet[3, 4] <- "seq(1, 100)" # peak IDs to process
+spreadsheet[3, 4] <- "seq(1, 100, 1)" # peak IDs to process
 UFAx_results <- UFAx_workflow(spreadsheet)
 }
 }
