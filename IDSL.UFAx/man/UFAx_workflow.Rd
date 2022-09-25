@@ -20,24 +20,6 @@ The MolecularFormulaAnnotationTable is saved in the assigned folder in the param
 \note{
 You should load the IDSL.UFA package to run the IDSL.UFAx functions.
 }
-\examples{
-\donttest{
-library(IDSL.UFA) # You should load the IDSL.UFA package to run the IDSL.UFAx functions.
-library(IDSL.UFAx)
-s_path <- system.file("extdata", package = "IDSL.UFAx")
-SSh1 <- paste0(s_path,"/UFAx_parameters.xlsx")
-temp_wd <- tempdir() # update this address
-temp_wd_zip <- paste0(temp_wd,"/003.mzML_UFAx_testfiles.zip")
-spreadsheet <- readxl::read_xlsx(SSh1)
-download.file(
-paste0("https://github.com/idslme/IDSL.UFAx/blob/main/UFAx_educational_files/",
-         "003.mzML_UFAx_testfiles.zip?raw=true"),
-destfile = temp_wd_zip)
-unzip(temp_wd_zip, exdir = temp_wd)
-spreadsheet[1, 4] <- temp_wd
-spreadsheet[4, 4] <- temp_wd
-spreadsheet[6, 4] <- temp_wd
-spreadsheet[3, 4] <- "seq(1, 100, 1)" # peak IDs to process
-UFAx_results <- UFAx_workflow(spreadsheet)
-}
+\seealso{
+See this link to illusterate an example \url{https://github.com/idslme/IDSL.UFAx/wiki/Example-for-IDSL.UFAx}
 }
