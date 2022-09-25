@@ -13,7 +13,7 @@ A pipeline to annotate a number of peaks from the [**IDSL.IPA**](https://github.
 	install.packages("IDSL.UFAx")
 
 
-**Note:** The IDSL.UFAx package has a dependency on [RcppAlgos](https://github.com/jwood000/RcppAlgos) and gmp R packages. In some instance to install these two packages, you may need to run the following command on a linux terminal
+**Note:** The IDSL.UFAx package has dependencies on [RcppAlgos](https://github.com/jwood000/RcppAlgos) and gmp R packages. In some instance to install these two packages, you may need to run the following command on a linux terminal.
 
 	sudo apt-get install libgmp-dev
 
@@ -23,14 +23,15 @@ To annotate your mass spectrometry data (**mzXML**, **mzML**, **netCDF**), mass 
 		library(IDSL.UFA)
 		library(IDSL.UFAx)
 		UFAx_workflow("Address of the UFAx parameter spreadsheet")
+		
+Visit [**wiki**](https://github.com/idslme/IDSL.UFAx/wiki) to illustrate an [example for IDSL.UFAx](https://github.com/idslme/IDSL.UFAx/wiki/Example-for-IDSL.UFAx).
 
 Visit https://ufa.idsl.me/enumerating-chemical-space/exhaustive-enumeration for the detailed documentation and tutorial.
 
 ## Ultra exhaustive enumeration
-IDSL.UFAx applies a hursitic approach to enumerate vast chemical spaces (<10<sup>27</sup> molecular formulas). Although, the IDSL.UFAx approach is computationally expensive, it is very suitable for elemental composition of unknown peaks when the chemical space is unidentifiable.
+IDSL.UFAx applies a hursitic approach to enumerate vast chemical spaces (<10<sup>27</sup> molecular formulas). Although the IDSL.UFAx approach is computationally expensive, it is very suitable for elemental composition of unknown chromatographic peaks when the chemical space is unidentifiable.
 
 ## Citation
 Fakouri Baygi, S., Banerjee S. K., Chakraborty P., Kumar, Y. Barupal, D.K. [IDSL.UFA assigns high confidence molecular formula annotations for untargeted LC/HRMS datasets in metabolomics and exposomics](https://pubs.acs.org/doi/10.1021/acs.analchem.2c00563). *Analytical Chemistry*, **2022**.
-
 
 Fakouri Baygi, S., Kumar, Y. Barupal, D.K. [IDSL. IPA characterizes the organic chemical space in untargeted LC/HRMS datasets](https://pubs.acs.org/doi/10.1021/acs.jproteome.2c00120). *Journal of proteome research*, **2022**, *21(6)*, 1485-1494.
