@@ -19,7 +19,7 @@ A pipeline to annotate a number of peaks from the [**IDSL.IPA**](https://github.
 ## Workflow
 To annotate your mass spectrometry data (**mzXML**, **mzML**, **netCDF**), mass spectrometry data should be processed using the [IDSL.IPA](https://github.com/idslme/IDSL.IPA) workflow to acquire chromatographic information of the peaks (***m/z-RT***). When the chromatographic information of individual peaklists were generated using the [IDSL.IPA](https://github.com/idslme/IDSL.IPA) workflow, download the [UFAx parameter spreadsheet](https://raw.githubusercontent.com/idslme/IDSL.UFAx/main/UFAx_parameters.xlsx) and select the parameters accordingly and then use this spreadsheet as the input for the IDSL.UFAx workflow:
 
-		library(IDSL.UFA)
+		library(IDSL.UFA) # IDSL.UFA package should be loaded to use IDSL.UFAx
 		library(IDSL.UFAx)
 		UFAx_workflow("Address of the UFAx parameter spreadsheet")
 		
