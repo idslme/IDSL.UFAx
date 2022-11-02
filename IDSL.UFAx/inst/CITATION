@@ -1,4 +1,4 @@
-citHeader("To cite IDSL.UFAx in publications, please use:")
+citHeader("To cite IDSL.UFA in publications, please use:")
 citFooter("We appreciate citing our manuscript to gain visibility in the scientific community!")
 
 citEntry("Article",
@@ -8,11 +8,13 @@ citEntry("Article",
          title  = "IDSL. UFA assigns high confidence molecular formula annotations for untargeted LC/HRMS datasets in metabolomics and exposomics",
          journal = "Analytical Chemistry",
          year    = "2022",
+         volume = "94",
+         number  = "39",
+         pages = "13315–13322",
          PubMedID = "36137231",
          url      = "https://pubs.acs.org/doi/10.1021/acs.analchem.2c00563",
-
          textVersion =
          paste0("Fakouri Baygi et. al.,\n",
                "IDSL. UFA assigns high confidence molecular formula annotations for untargeted LC/HRMS datasets in metabolomics and exposomics\n",
-               "Analytical Chemistry, 2022, doi:10.1021/acs.analchem.2c00563\n")
+               "Analytical Chemistry, 2022, 94(39), 13315–13322, doi:10.1021/acs.analchem.2c00563\n")
         )

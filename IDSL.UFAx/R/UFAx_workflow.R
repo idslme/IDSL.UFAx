@@ -2,7 +2,9 @@ UFAx_workflow <- function(spreadsheet) {
   ##
   exhaustive_chemical_enumeration_annotated_table <- NULL
   gc()
+  ##############################################################################
   initiation_time <- Sys.time()
+  spreadsheet <- gsub("\\", "/", spreadsheet, fixed = TRUE)
   message("Initiated testing the spreadsheet consistency!")
   ##
   checkpoint_parameter <- FALSE
@@ -635,8 +637,9 @@ UFAx_workflow <- function(spreadsheet) {
                       PEAKS <- spectraList[[RangeScan[sc]]]
                       for (Iso in 1:size_IP) {
                         x_Iso <- which(abs(PEAKS[, 1] - IsotopicProfile[Iso, 1]) <= mass_accuracy)
-                        if (length(x_Iso) > 0) {
-                          if (length(x_Iso) > 1) {
+                        Lx_Iso <- length(x_Iso)
+                        if (Lx_Iso > 0) {
+                          if (Lx_Iso > 1) {
                             x_Is0 <- which.min(abs(PEAKS[x_Iso, 1] - IsotopicProfile[Iso, 1]))
                             x_Iso <- x_Iso[x_Is0[1]]
                           }
@@ -770,7 +773,7 @@ UFAx_workflow <- function(spreadsheet) {
         message("Completed searching in the library of molecular formula!!!")
       }
       save(exhaustive_chemical_enumeration_annotated_table, file = paste0(output_path, "/exhaustive_chemical_enumeration_annotated_table_", ECE0005, ".Rdata"))
-      write.csv(exhaustive_chemical_enumeration_annotated_table, file = paste0(output_path, "/exhaustive_chemical_enumeration_annotated_table_", ECE0005, ".csv"))
+      write.csv(exhaustive_chemical_enumeration_annotated_table, file = paste0(output_path, "/exhaustive_chemical_enumeration_annotated_table_", ECE0005, ".csv"), row.names = FALSE)
       message("Completed the exhaustive chemical enumeration analysis!!!")
       required_time <- Sys.time() - initiation_time
       print(required_time)

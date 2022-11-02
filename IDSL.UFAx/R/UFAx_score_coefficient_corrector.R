@@ -58,5 +58,5 @@ UFAx_score_coefficient_corrector <- function(annotated_molf_address, maxNEME, Sc
   rownames(annotated_molf_updated) <- NULL
   ##
   save(annotated_molf_updated, file = paste0(file_names, "_updated.Rdata"))
-  write.csv(annotated_molf_updated, file = paste0(file_names, "_updated.csv"))
+  write.csv(annotated_molf_updated, file = paste0(file_names, "_updated.csv"), row.names = FALSE)
 }

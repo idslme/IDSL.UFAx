@@ -39,7 +39,7 @@ UFAx_molecular_formula_library_search <- function(molecular_formula_ions, IonPat
       freq_p <- MF_library[MF_intact]
       x_NA <- which(is.na(freq_p))
       freq_p[x_NA] <- 0
-      names(freq_p) <- c()
+      names(freq_p) <- NULL
       lib_MF_freq <- cbind(MF_intact, freq_p)
       lib_MF_freq <- data.frame(lib_MF_freq)
       colnames(lib_MF_freq) <- c(paste0("MolFormula ", IonPathways[p]), "Frequency")
@@ -78,7 +78,7 @@ UFAx_molecular_formula_library_search <- function(molecular_formula_ions, IonPat
       freq_p <- MF_library[MF_intact]
       x_NA <- which(is.na(freq_p))
       freq_p[x_NA] <- 0
-      names(freq_p) <- c()
+      names(freq_p) <- NULL
       lib_MF_freq <- cbind(MF_intact, freq_p)
       lib_MF_freq <- data.frame(lib_MF_freq)
       colnames(lib_MF_freq) <- c(paste0("MolFormula ", IonPathways[p]), "Frequency")
