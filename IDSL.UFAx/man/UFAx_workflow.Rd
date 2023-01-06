@@ -34,9 +34,9 @@ download.file(
          "003.mzML_UFAx_testfiles.zip?raw=true"), destfile = temp_wd_zip, mode = "wb")
 unzip(temp_wd_zip, exdir = temp_wd)
 spreadsheet[1, 4] <- temp_wd
-spreadsheet[4, 4] <- temp_wd
+spreadsheet[3, 4] <- temp_wd
 spreadsheet[6, 4] <- temp_wd
-spreadsheet[3, 4] <- "seq(1, 100, 1)" # peak IDs to process
+spreadsheet[5, 4] <- "seq(1, 100, 1)" # peak IDs to process
 UFAx_results <- UFAx_workflow(spreadsheet)
 }
 }
