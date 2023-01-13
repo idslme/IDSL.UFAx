@@ -26,8 +26,6 @@ To annotate your mass spectrometry data (**mzXML**, **mzML**, **netCDF**), mass 
 		
 Visit [**wiki**](https://github.com/idslme/IDSL.UFAx/wiki) to illustrate an [example for IDSL.UFAx](https://github.com/idslme/IDSL.UFAx/wiki/Example-for-IDSL.UFAx).
 
-Visit https://ufa.idsl.me/enumerating-chemical-space/exhaustive-enumeration for the detailed documentation and tutorial.
-
 ## Ultra exhaustive enumeration
 IDSL.UFAx applies a hursitic approach to enumerate vast chemical spaces (<10<sup>27</sup> molecular formulas). Although the IDSL.UFAx approach is computationally expensive, it is very suitable for elemental composition of unknown chromatographic peaks when the chemical space is unidentifiable.
 
