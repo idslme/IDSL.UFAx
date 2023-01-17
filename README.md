@@ -8,7 +8,10 @@
 [![Dependencies](https://tinyverse.netlify.com/badge/IDSL.UFAx)](https://cran.r-project.org/package=IDSL.UFAx)
 <!-- badges: end -->
 
-**exhaustive Ultra Formula Annotation (UFAx)** by the [**Integrated Data Science Laboratory for Metabolomics and Exposomics (IDSL.ME)**](https://www.idsl.me/) is an R package to annotate a number of peaks from the [**IDSL.IPA**](https://github.com/idslme/IDSL.IPA) peaklists using an exhaustive chemical enumeration-based approach. This package can perform elemental composition calculations using the following 15 elements : C, B, Br, Cl, K, S, Si, N, H, As, F, I, Na, O, and P. The IDSL.UFAx enumeration approach is a controlled combinatorial explosion to find molecular formulas for chromatographic peaks that were left un-assigned by the database and ECS approaches. IDSL.UFAx utilizes combinatorial subset sum solutions using 15 selected atoms for one m/z value. However, depending on the complexity of the assigned chemical space, IDSL.UFAx may be slow and should only be used for one file at a time. 
+**exhaustive Ultra Formula Annotation (UFAx)** by the [**Integrated Data Science Laboratory for Metabolomics and Exposomics (IDSL.ME)**](https://www.idsl.me/) is an R package to annotate a number of peaks from the [**IDSL.IPA**](https://github.com/idslme/IDSL.IPA) peaklists using an exhaustive chemical enumeration-based approach. This package can perform elemental composition calculations using the following 15 elements : C, B, Br, Cl, K, S, Si, N, H, As, F, I, Na, O, and P.
+
+## Ultra exhaustive enumeration
+IDSL.UFAx applies a hursitic approach to enumerate vast chemical spaces (<10<sup>27</sup> molecular formulas). Although the IDSL.UFAx approach is computationally expensive, it is very suitable for elemental composition of unknown chromatographic peaks when the chemical space is unidentifiable. The IDSL.UFAx enumeration approach is a controlled combinatorial explosion to find molecular formulas for chromatographic peaks that were left un-assigned by a molecular formula source and enumerated chemical space approaches embedded in the [IDSL.UFA](https://github.com/idslme/IDSL.UFA) package. IDSL.UFAx utilizes combinatorial subset sum solutions using 15 selected atoms for one m/z value. However, depending on the complexity of the assigned chemical space, IDSL.UFAx may be slow and should only be used for one file at a time.
 
 ## Installation
 
@@ -25,9 +28,6 @@ To annotate your mass spectrometry data (**mzXML**, **mzML**, **netCDF**), mass 
 		UFAx_workflow("Address of the UFAx parameter spreadsheet")
 		
 Visit [**wiki**](https://github.com/idslme/IDSL.UFAx/wiki) to illustrate an [example for IDSL.UFAx](https://github.com/idslme/IDSL.UFAx/wiki/Example-for-IDSL.UFAx).
-
-## Ultra exhaustive enumeration
-IDSL.UFAx applies a hursitic approach to enumerate vast chemical spaces (<10<sup>27</sup> molecular formulas). Although the IDSL.UFAx approach is computationally expensive, it is very suitable for elemental composition of unknown chromatographic peaks when the chemical space is unidentifiable.
 
 ## Citation
 Fakouri Baygi, S., Banerjee S. K., Chakraborty P., Kumar, Y. Barupal, D.K. [IDSL.UFA assigns high confidence molecular formula annotations for untargeted LC/HRMS datasets in metabolomics and exposomics](https://pubs.acs.org/doi/10.1021/acs.analchem.2c00563). *Analytical Chemistry*, **2022**, *94(39)*, 13315–13322.
