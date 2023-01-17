@@ -12,11 +12,11 @@
 
 ## Table of Contents
 
-- [Ultra eXhaustive Enumeration](https://github.com/idslme/IDSL.UFA#ultra-exhaustive-enumeration)
-- [Installation](https://github.com/idslme/IDSL.UFA#installation)
-- [Workflow](https://github.com/idslme/IDSL.UFA#workflow)
-- [Wiki](https://github.com/idslme/IDSL.UFA#wiki)
-- [Citation](https://github.com/idslme/IDSL.UFA#citation)
+- [Ultra eXhaustive Enumeration](https://github.com/idslme/IDSL.UFAx#ultra-exhaustive-enumeration)
+- [Installation](https://github.com/idslme/IDSL.UFAx#installation)
+- [Workflow](https://github.com/idslme/IDSL.UFAx#workflow)
+- [Wiki](https://github.com/idslme/IDSL.UFAx#wiki)
+- [Citation](https://github.com/idslme/IDSL.UFAx#citation)
 
 ## Ultra eXhaustive Enumeration
 
