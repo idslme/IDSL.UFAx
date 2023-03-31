@@ -1,7 +1,7 @@
 # IDSL.UFAx<img src='UFAx_educational_files/Figures/IDSL.UFAx-logo.png' width="250px" align="right" />
 
 <!-- badges: start -->
-[![Maintainer](https://img.shields.io/badge/maintainer-Sadjad_Fakouri_Baygi-blue)](https://github.com/sajfb)
+[![Developed-by](https://img.shields.io/badge/Developed_by-Sadjad_Fakouri_Baygi-blue)](https://github.com/sajfb)
 [![CRAN status](https://www.r-pkg.org/badges/version/IDSL.UFAx)](https://cran.r-project.org/package=IDSL.UFAx)
 ![](http://cranlogs.r-pkg.org/badges/IDSL.UFAx?color=orange)
 ![](http://cranlogs.r-pkg.org/badges/grand-total/IDSL.UFAx?color=brightgreen)

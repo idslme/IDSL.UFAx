@@ -1,38 +1,43 @@
 UFAx_workflow <- function(spreadsheet) {
   ##
-  gc()
-  closeAllConnections()
+  tryCatch(gc(), error = function(e) {NULL}, warning = function(w) {NULL})
+  tryCatch(closeAllConnections(), error = function(e) {NULL}, warning = function(w) {NULL})
   ##
   exhaustive_chemical_enumeration_annotated_table <- NULL
   ##
   ##############################################################################
   ##
   initiation_time <- Sys.time()
-  message("Initiated testing the spreadsheet consistency!")
+  IPA_message("Initiated testing the spreadsheet consistency!", failedMessage = FALSE)
   ##
   checkpoint_parameter <- FALSE
-  #
-  if (length(spreadsheet) >= 4) {
-    if (typeof(spreadsheet) == "list") {
-      PARAM_exECS <- cbind(spreadsheet[, 2], spreadsheet[, 4])
+  ##
+  if (typeof(spreadsheet) == "list") {
+    if (ncol(spreadsheet) >= 4) {
+      PARAM <- cbind(spreadsheet[, 2], spreadsheet[, 4])
       checkpoint_parameter <- TRUE
+      ##
+    } else if (ncol(spreadsheet) == 2) {
+      PARAM <- spreadsheet
+      checkpoint_parameter <- TRUE
+      ##
     } else {
-      message("The UFAx spreadsheet was not produced properly!")
+      IPA_message("The UFAx spreadsheet tab was not produced properly!")
     }
-  } else if (length(spreadsheet) == 1) {
-    if (typeof(spreadsheet) == "character") {
+  } else if (typeof(spreadsheet) == "character") {
+    if (length(spreadsheet) == 1) {
       if (file.exists(spreadsheet)) {
-        spreadsheet <- readxl::read_xlsx(spreadsheet, sheet = "exhaustive_chemical_enumeration")
-        PARAM_exECS <- cbind(spreadsheet[, 2], spreadsheet[, 4])
+        PARAM <- readxl::read_xlsx(spreadsheet, sheet = "exhaustive_chemical_enumeration")
+        PARAM <- cbind(PARAM[, 2], PARAM[, 4])
         checkpoint_parameter <- TRUE
       } else {
-        message("The UFAx spreadsheet not found! It should be an Excel file with .xlsx extention!")
+        IPA_message("The `exhaustive_chemical_enumeration` spreadsheet tab not found! It should be an Excel file with .xlsx extention!")
       }
     } else {
-      message("The UFAx spreadsheet was not produced properly!")
+      IPA_message("The UFAx spreadsheet tab was not produced properly!")
     }
   } else {
-    message("The UFAx spreadsheet was not produced properly!")
+    IPA_message("The UFAx spreadsheet tab was not produced properly!")
   }
   ##
   ##############################################################################
@@ -46,11 +51,11 @@ UFAx_workflow <- function(spreadsheet) {
       MSfileName <- PARAM_exECS[which(PARAM_exECS[, 1] == "exECS0002"), 2]
       if (!file.exists(paste0(inputHRMSfolderPath, "/", MSfileName))) {
         checkpoint_parameter <- FALSE
-        message("ERROR!!! Problem with exECS0002! HRMS is not available!")
+        IPA_message("ERROR!!! Problem with exECS0002! HRMS is not available!")
       }
     } else {
       checkpoint_parameter <- FALSE
-      message("ERROR!!! Problem with exECS0001! Folder of HRMS file is not available!")
+      IPA_message("ERROR!!! Problem with exECS0001! Folder of HRMS file is not available!")
     }
     ##
     x0003 <- which(PARAM_exECS[, 1] == "exECS0003")
@@ -61,11 +66,11 @@ UFAx_workflow <- function(spreadsheet) {
       addressPeaklistFileName <- paste0(addressPeaklist, "/", peaklistFileName)
       if (!file.exists(addressPeaklistFileName)) {
         checkpoint_parameter <- FALSE
-        message("ERROR!!! Problem with exECS0004! peaklist is not available!")
+        IPA_message("ERROR!!! Problem with exECS0004! peaklist is not available!")
       }
     } else {
       checkpoint_parameter <- FALSE
-      message("ERROR!!! Problem with exECS0003! Folder of peaklist is not available!")
+      IPA_message("ERROR!!! Problem with exECS0003! Folder of peaklist is not available!")
     }
     peaklist <- IDSL.IPA::loadRdata(addressPeaklistFileName)
     noPeaks <- dim(peaklist)[1]
@@ -73,20 +78,20 @@ UFAx_workflow <- function(spreadsheet) {
     exECS0005 <- PARAM_exECS[which(PARAM_exECS[, 1] == "exECS0005"), 2]
     if (is.na(exECS0005)) {
       checkpoint_parameter <- FALSE
-      message("ERROR!!! Problem with exECS0005! This parameter should be `All` or a vector of indices!")
+      IPA_message("ERROR!!! Problem with exECS0005! This parameter should be `All` or a vector of indices!")
     } else {
       if (gsub(" ", "", tolower(exECS0005)) == "all") {
         selectedIDpeaklist <- 1:noPeaks
-        message("The enitre 12C m/z values in the peaklist were placed in the processing row! Annotated molecular formulas for peak IDs are kept in the 'log_exECS_annotation_' folder!")
+        IPA_message("The enitre 12C m/z values in the peaklist were placed in the processing row! Annotated molecular formulas for peak IDs are kept in the 'log_exECS_annotation_' folder!", failedMessage = TRUE)
       } else {
         selectedIDpeaklist <- tryCatch(eval(parse(text = paste0("c(", exECS0005, ")"))), error = function(e) {NULL})
         if (is.null(selectedIDpeaklist) | (max(selectedIDpeaklist) > noPeaks)) {
           checkpoint_parameter <- FALSE
-          message("ERROR!!! Problem with exECS0005! The range of indices are out of the peaklist dimension!")
+          IPA_message("ERROR!!! Problem with exECS0005! The range of indices are out of the peaklist dimension!")
         } else {
-          message("The following peak IDs were selected for processing: ")
+          IPA_message("The following peak IDs were selected for processing: ")
           for (id in 1:length(selectedIDpeaklist)) {
-            message(paste0(selectedIDpeaklist[id], " - ", peaklist[selectedIDpeaklist[id], 3],  " - ", peaklist[selectedIDpeaklist[id], 8]))
+            IPA_message(paste0(selectedIDpeaklist[id], " - ", peaklist[selectedIDpeaklist[id], 3],  " - ", peaklist[selectedIDpeaklist[id], 8]))
           }
         }
       }
@@ -104,27 +109,27 @@ UFAx_workflow <- function(spreadsheet) {
     ##
     number_processing_threads <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0007'), 2])
     if (length(number_processing_threads) == 0) {
-      message("ERROR!!! Problem with exECS0007! This parameter should be a positive integer!")
+      IPA_message("ERROR!!! Problem with exECS0007! This parameter should be a positive integer!")
       checkpoint_parameter <- FALSE
     } else {
       if (number_processing_threads >= 1) {
         if ((number_processing_threads %% 1) != 0) {
-          message("ERROR!!! Problem with exECS0007! This parameter should be a positive integer!")
+          IPA_message("ERROR!!! Problem with exECS0007! This parameter should be a positive integer!")
           checkpoint_parameter <- FALSE
         }
       } else {
-        message("ERROR!!! Problem with exECS0007! This parameter should be at least 1 !")
+        IPA_message("ERROR!!! Problem with exECS0007! This parameter should be at least 1 !")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     maxR13C <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0008'), 2])
     if (length(maxR13C) == 0) {
-      message("ERROR!!! Problem with exECS0008! This parameter should be a positive number!")
+      IPA_message("ERROR!!! Problem with exECS0008! This parameter should be a positive number!")
       checkpoint_parameter <- FALSE
     } else {
       if (maxR13C <= 0) {
-        message("ERROR!!! Problem with exECS0008! This parameter should be a positive number!")
+        IPA_message("ERROR!!! Problem with exECS0008! This parameter should be a positive number!")
         checkpoint_parameter <- FALSE
       }
     }
@@ -133,132 +138,132 @@ UFAx_workflow <- function(spreadsheet) {
     ############################################################################
     B_MAX <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0009'), 2])
     if (length(B_MAX) == 0) {
-      message("ERROR!!! Problem with exECS0009! This parameter should be a positive integer!")
+      IPA_message("ERROR!!! Problem with exECS0009! This parameter should be a positive integer!")
       checkpoint_parameter <- FALSE
     } else {
       if (B_MAX < 0) {
-        message("ERROR!!! Problem with exECS0009! This parameter should be a positive integer!")
+        IPA_message("ERROR!!! Problem with exECS0009! This parameter should be a positive integer!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     Br_MAX <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0010'), 2])
     if (length(Br_MAX) == 0) {
-      message("ERROR!!! Problem with exECS0010! This parameter should be a positive integer!")
+      IPA_message("ERROR!!! Problem with exECS0010! This parameter should be a positive integer!")
       checkpoint_parameter <- FALSE
     } else {
       if (Br_MAX < 0) {
-        message("ERROR!!! Problem with exECS0010! This parameter should be a positive integer!")
+        IPA_message("ERROR!!! Problem with exECS0010! This parameter should be a positive integer!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     Cl_MAX <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0011'), 2])
     if (length(Cl_MAX) == 0) {
-      message("ERROR!!! Problem with exECS0011! This parameter should be a positive integer!")
+      IPA_message("ERROR!!! Problem with exECS0011! This parameter should be a positive integer!")
       checkpoint_parameter <- FALSE
     } else {
       if (Cl_MAX < 0) {
-        message("ERROR!!! Problem with exECS0011! This parameter should be a positive integer!")
+        IPA_message("ERROR!!! Problem with exECS0011! This parameter should be a positive integer!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     S_MAX <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0012'), 2])
     if (length(S_MAX) == 0) {
-      message("ERROR!!! Problem with exECS0012! This parameter should be a positive integer!")
+      IPA_message("ERROR!!! Problem with exECS0012! This parameter should be a positive integer!")
       checkpoint_parameter <- FALSE
     } else {
       if (S_MAX < 0) {
-        message("ERROR!!! Problem with exECS0012! This parameter should be a positive integer!")
+        IPA_message("ERROR!!! Problem with exECS0012! This parameter should be a positive integer!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     Si_MAX <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0013'), 2])
     if (length(Si_MAX) == 0) {
-      message("ERROR!!! Problem with exECS0013! This parameter should be a positive integer!")
+      IPA_message("ERROR!!! Problem with exECS0013! This parameter should be a positive integer!")
       checkpoint_parameter <- FALSE
     } else {
       if (Si_MAX < 0) {
-        message("ERROR!!! Problem with exECS0013! This parameter should be a positive integer!")
+        IPA_message("ERROR!!! Problem with exECS0013! This parameter should be a positive integer!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     N_MAX <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0014'), 2])
     if (length(N_MAX) == 0) {
-      message("ERROR!!! Problem with exECS0014! This parameter should be a positive integer!")
+      IPA_message("ERROR!!! Problem with exECS0014! This parameter should be a positive integer!")
       checkpoint_parameter <- FALSE
     } else {
       if (N_MAX < 0) {
-        message("ERROR!!! Problem with exECS0014! This parameter should be a positive integer!")
+        IPA_message("ERROR!!! Problem with exECS0014! This parameter should be a positive integer!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     As_MAX <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0015'), 2])
     if (length(As_MAX) == 0) {
-      message("ERROR!!! Problem with exECS0015! This parameter should be a positive integer!")
+      IPA_message("ERROR!!! Problem with exECS0015! This parameter should be a positive integer!")
       checkpoint_parameter <- FALSE
     } else {
       if (As_MAX < 0) {
-        message("ERROR!!! Problem with exECS0015! This parameter should be a positive integer!")
+        IPA_message("ERROR!!! Problem with exECS0015! This parameter should be a positive integer!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     I_MAX <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0016'), 2])
     if (length(I_MAX) == 0) {
-      message("ERROR!!! Problem with exECS0016! This parameter should be a positive integer!")
+      IPA_message("ERROR!!! Problem with exECS0016! This parameter should be a positive integer!")
       checkpoint_parameter <- FALSE
     } else {
       if (I_MAX < 0) {
-        message("ERROR!!! Problem with exECS0016! This parameter should be a positive integer!")
+        IPA_message("ERROR!!! Problem with exECS0016! This parameter should be a positive integer!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     O_MAX <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0017'), 2])
     if (length(O_MAX) == 0) {
-      message("ERROR!!! Problem with exECS0017! This parameter should be a positive integer!")
+      IPA_message("ERROR!!! Problem with exECS0017! This parameter should be a positive integer!")
       checkpoint_parameter <- FALSE
     } else {
       if (O_MAX < 0) {
-        message("ERROR!!! Problem with exECS0017! This parameter should be a positive integer!")
+        IPA_message("ERROR!!! Problem with exECS0017! This parameter should be a positive integer!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     P_MAX <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0018'), 2])
     if (length(P_MAX) == 0) {
-      message("ERROR!!! Problem with exECS0018! This parameter should be a positive integer!")
+      IPA_message("ERROR!!! Problem with exECS0018! This parameter should be a positive integer!")
       checkpoint_parameter <- FALSE
     } else {
       if (P_MAX < 0) {
-        message("ERROR!!! Problem with exECS0018! This parameter should be a positive integer!")
+        IPA_message("ERROR!!! Problem with exECS0018! This parameter should be a positive integer!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     Na_MAX <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0019'), 2])
     if (length(Na_MAX) == 0) {
-      message("ERROR!!! Problem with exECS0019! This parameter should be a positive integer!")
+      IPA_message("ERROR!!! Problem with exECS0019! This parameter should be a positive integer!")
       checkpoint_parameter <- FALSE
     } else {
       if (Na_MAX < 0) {
-        message("ERROR!!! Problem with exECS0019! This parameter should be a positive integer!")
+        IPA_message("ERROR!!! Problem with exECS0019! This parameter should be a positive integer!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     K_MAX <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0020'), 2])
     if (length(K_MAX) == 0) {
-      message("ERROR!!! Problem with exECS0020! This parameter should be a positive integer!")
+      IPA_message("ERROR!!! Problem with exECS0020! This parameter should be a positive integer!")
       checkpoint_parameter <- FALSE
     } else {
       if (K_MAX < 0) {
-        message("ERROR!!! Problem with exECS0020! This parameter should be a positive integer!")
+        IPA_message("ERROR!!! Problem with exECS0020! This parameter should be a positive integer!")
         checkpoint_parameter <- FALSE
       }
     }
@@ -271,24 +276,24 @@ UFAx_workflow <- function(spreadsheet) {
     } else if (ipw == "[M]") {
       ipw_n <- 0
     } else {
-      message("ERROR!!! Problem with exECS0021! This parameter should be any of '[M+H/K/Na]', '[M-H]', '[M]'!")
+      IPA_message("ERROR!!! Problem with exECS0021! This parameter should be any of '[M+H/K/Na]', '[M-H]', '[M]'!")
       checkpoint_parameter <- FALSE
     }
     ##
     peak_spacing <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0022'), 2])
     if (length(peak_spacing) == 0) {
-      message("ERROR!!! Problem with exECS0022! This parameter should be a positive number!")
+      IPA_message("ERROR!!! Problem with exECS0022! This parameter should be a positive number!")
       checkpoint_parameter <- FALSE
     } else {
       if (peak_spacing < 0) {
-        message("ERROR!!! Problem with exECS0022! This parameter should be a positive number!")
+        IPA_message("ERROR!!! Problem with exECS0022! This parameter should be a positive number!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     intensity_cutoff_str <- PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0023'), 2]
     if (length(intensity_cutoff_str) == 0) {
-      message("ERROR!!! Problem with exECS0023!")
+      IPA_message("ERROR!!! Problem with exECS0023!")
       checkpoint_parameter <- FALSE
       ##
       c <- 5
@@ -303,24 +308,24 @@ UFAx_workflow <- function(spreadsheet) {
       checkStrInt <- FALSE
       tryCatch(eval(parse(text = intensity_cutoff_str)), error = function(e) {checkStrInt <- TRUE})
       if (checkStrInt) {
-        message("ERROR!!! Problem with exECS0023!")
+        IPA_message("ERROR!!! Problem with exECS0023!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     UFA_IP_memeory_variables <- tryCatch(eval(parse(text = paste0("c(", PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0024'), 2], ")"))), error = function(e) {NULL})
     if (length(UFA_IP_memeory_variables) != 3) {
-      message("ERROR!!! Problem with exECS0024! This parameter should be a vector of three positive numbers!")
+      IPA_message("ERROR!!! Problem with exECS0024! This parameter should be a vector of three positive numbers!")
       checkpoint_parameter <- FALSE
     }
     ##
     maxHalogenCounts <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0025'), 2])
     if (length(maxHalogenCounts) == 0) {
-      message("ERROR!!! Problem with exECS0025! This parameter should be a number!")
+      IPA_message("ERROR!!! Problem with exECS0025! This parameter should be a number!")
       checkpoint_parameter <- FALSE
     } else {
       if (maxHalogenCounts < 0) {
-        message("ERROR!!! Problem with exECS0025! This parameter should be a number!")
+        IPA_message("ERROR!!! Problem with exECS0025! This parameter should be a number!")
         checkpoint_parameter <- FALSE
       }
     }
@@ -331,17 +336,17 @@ UFAx_workflow <- function(spreadsheet) {
     } else if (Na_K_x == "" | Na_K_x == " " | Na_K_x == "0" | tolower(Na_K_x) == "f" | tolower(Na_K_x) == "false") {
       NaKruleCheck <- FALSE
     } else {
-      message("ERROR!!! Problem with exECS0026!")
+      IPA_message("ERROR!!! Problem with exECS0026!")
       checkpoint_parameter <- FALSE
     }
     ##
     MaxR13C <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0027'), 2]) + maxR13C
     if (length(MaxR13C) == 0) {
-      message("ERROR!!! Problem with exECS0027! This parameter should be a positive number!")
+      IPA_message("ERROR!!! Problem with exECS0027! This parameter should be a positive number!")
       checkpoint_parameter <- FALSE
     } else {
       if (MaxR13C <= 0) {
-        message("ERROR!!! Problem with exECS0027! This parameter should be a positive number!")
+        IPA_message("ERROR!!! Problem with exECS0027! This parameter should be a positive number!")
         checkpoint_parameter <- FALSE
       }
     }
@@ -350,73 +355,73 @@ UFAx_workflow <- function(spreadsheet) {
     ############################################################################
     massAccuracy <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0028'), 2])
     if (length(massAccuracy) == 0) {
-      message("ERROR!!! Problem with exECS0028! This parameter should be a positive number!")
+      IPA_message("ERROR!!! Problem with exECS0028! This parameter should be a positive number!")
       checkpoint_parameter <- FALSE
     } else {
       if (massAccuracy > 0.01) {
-        message("ERROR!!! Problem with exECS0028! Mass accuracy must be below `0.01 Da`")
+        IPA_message("ERROR!!! Problem with exECS0028! Mass accuracy must be below `0.01 Da`")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     maxNEME <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0029'), 2])
     if (length(maxNEME) == 0) {
-      message("ERROR!!! Problem with exECS0029! This parameter should be a positive number!")
+      IPA_message("ERROR!!! Problem with exECS0029! This parameter should be a positive number!")
       checkpoint_parameter <- FALSE
     } else {
       if (maxNEME <= 0) {
-        message("ERROR!!! Problem with exECS0029! This parameter should be a positive number!")
+        IPA_message("ERROR!!! Problem with exECS0029! This parameter should be a positive number!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     minPCS <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0030'), 2])
     if (length(minPCS) == 0) {
-      message("ERROR!!! Problem with exECS0030! This parameter should be a positive number!")
+      IPA_message("ERROR!!! Problem with exECS0030! This parameter should be a positive number!")
       checkpoint_parameter <- FALSE
     } else {
       if (minPCS <= 0) {
-        message("ERROR!!! Problem with exECS0030! This parameter should be a positive number!")
+        IPA_message("ERROR!!! Problem with exECS0030! This parameter should be a positive number!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     minNDCS <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0031'), 2])
     if (length(minNDCS) == 0) {
-      message("ERROR!!! Problem with exECS0031! This parameter should be a positive number!")
+      IPA_message("ERROR!!! Problem with exECS0031! This parameter should be a positive number!")
       checkpoint_parameter <- FALSE
     } else {
       if (minNDCS <= 0) {
-        message("ERROR!!! Problem with exECS0031! This parameter should be a positive number!")
+        IPA_message("ERROR!!! Problem with exECS0031! This parameter should be a positive number!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     minRCS <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0032'), 2])
     if (length(minRCS) == 0) {
-      message("ERROR!!! Problem with exECS0032! This parameter should be between 0-100!")
+      IPA_message("ERROR!!! Problem with exECS0032! This parameter should be between 0-100!")
       checkpoint_parameter <- FALSE
     } else {
       if ((minRCS < 0) | (minRCS > 100)) {
-        message("ERROR!!! Problem with exECS0032! This parameter should be between 0-100!")
+        IPA_message("ERROR!!! Problem with exECS0032! This parameter should be between 0-100!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     scoreCoefficients <- tryCatch(eval(parse(text = PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0033'), 2])), error = function(e) {NULL})
     if (is.null(scoreCoefficients)) {
-      message("ERROR!!! Problem with exECS0033! This parameter should be a vector of five positive numbers!")
+      IPA_message("ERROR!!! Problem with exECS0033! This parameter should be a vector of five positive numbers!")
       checkpoint_parameter <- FALSE
     } else {
       if (length(scoreCoefficients) != 5) {
-        message("ERROR!!! Problem with exECS0033! This parameter should be a vector of five positive numbers!")
+        IPA_message("ERROR!!! Problem with exECS0033! This parameter should be a vector of five positive numbers!")
         checkpoint_parameter <- FALSE
       }
     }
     ##
     maxAllowedNumberHits <- as.numeric(PARAM_exECS[which(PARAM_exECS[, 1] == "exECS0034"), 2])
     if (length(maxAllowedNumberHits) == 0) {
-      message("ERROR!!! Problem with exECS0034! This parameter should be a positive number!")
+      IPA_message("ERROR!!! Problem with exECS0034! This parameter should be a positive number!")
       checkpoint_parameter <- FALSE
     } else {
       if (maxAllowedNumberHits > 0) {
@@ -430,7 +435,7 @@ UFAx_workflow <- function(spreadsheet) {
         if (!dir.exists(outputProfileSpectra)) {
           dir.create(outputProfileSpectra, recursive = TRUE)
         }
-        message("UFAx_spectra comparison plots with theoretical isotopic profiles are stored in the `UFAx_spectra` folder!")
+        IPA_message("UFAx_spectra comparison plots with theoretical isotopic profiles are stored in the `UFAx_spectra` folder!")
       } else {
         exportSpectraCheck <- FALSE
         exportSpectraParameters <- NULL
@@ -439,11 +444,11 @@ UFAx_workflow <- function(spreadsheet) {
     ##
     exECS0035 <- PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0035'), 2]
     if (length(exECS0035) == 0) {
-      message("ERROR!!! Problem with exECS0035!")
+      IPA_message("ERROR!!! Problem with exECS0035!")
       checkpoint_parameter <- FALSE
     } else {
       if (!(tolower(exECS0035) == "yes" | tolower(exECS0035) == "no")) {
-        message("ERROR!!! Problem with exECS0035!")
+        IPA_message("ERROR!!! Problem with exECS0035!")
         checkpoint_parameter <- FALSE
       }
     }
@@ -451,26 +456,26 @@ UFAx_workflow <- function(spreadsheet) {
     if (tolower(exECS0035) == "yes") {
       IonPathways <- tryCatch(eval(parse(text = paste0("c(", PARAM_exECS[which(PARAM_exECS[, 1] == 'exECS0036'), 2], ")"))), error = function(e) {NULL})
       if (is.null(IonPathways)) {
-        message("ERROR!!! Problem with exECS0036!")
+        IPA_message("ERROR!!! Problem with exECS0036!")
         checkpoint_parameter <- FALSE
       }
       ##
       exECS0037 <- which(PARAM_exECS[, 1] == 'exECS0037')
       if (length(exECS0037) == 0) {
-        message("ERROR!!! Problem with exECS0037! PubChem library data is not available! You should use the 'molecular_formula_library_generator' module to produce the molecular formula library!")
+        IPA_message("ERROR!!! Problem with exECS0037! PubChem library data is not available! You should use the 'molecular_formula_library_generator' module to produce the molecular formula library!")
         checkpoint_parameter <- FALSE
       } else {
         PubChem_library_path <- gsub("\\", "/", PARAM_exECS[exECS0037, 2], fixed = TRUE)
         PARAM_exECS[exECS0037, 2] <- PubChem_library_path
         if (!file.exists(PubChem_library_path)) {
-          message("ERROR!!! Problem with exECS0037! PubChem library data is not available! You should use the 'molecular_formula_library_generator' module to produce the molecular formula library!")
+          IPA_message("ERROR!!! Problem with exECS0037! PubChem library data is not available! You should use the 'molecular_formula_library_generator' module to produce the molecular formula library!")
           checkpoint_parameter <- FALSE
         }
       }
     }
     ############################################################################
     if (checkpoint_parameter) {
-      message("The spreadsheet is consistent with the IDSL.UFAx workflow!")
+      IPA_message("The spreadsheet is consistent with the IDSL.UFAx workflow!", failedMessage = FALSE)
       ##
       Elements <- c("As", "Br", "Cl", "Na", "Si", "B", "C", "F", "H", "I", "K", "N", "O", "P", "S") # DO NOT change this order!
       x_c_el <- 7 # = which(Elements == "C") # index number of Carbon
@@ -597,7 +602,7 @@ UFAx_workflow <- function(spreadsheet) {
         ########################################################################
         if (length(molecular_formula) > 0) {
           MoleFormVecMat <- do.call(rbind, lapply(molecular_formula, function(molf) {
-            molvec <- formula_vector_generator(molf, Elements, LElements, allowedRedundantElements = FALSE)
+            molvec <- formula_vector_generator(molf, Elements, LElements, allowedRedundantElements = FALSE) # `allowedRedundantElements` must be `FALSE` for UFAx
             if (molvec[x_c_el] > 0) {
               molvec
             }
@@ -664,7 +669,7 @@ UFAx_workflow <- function(spreadsheet) {
                     MoleFormVecMat <- NULL
                     ##
                     IPDB_exECS <- molecularFormula2IPdb(molecularFormulaDatabase, retentionTime = NULL, peak_spacing, intensity_cutoff_str, IonPathways = "[M]",
-                    					number_processing_threads = 1, UFA_IP_memeory_variables, allowedMustRunCalculation = FALSE, allowedVerbose = FALSE)
+                                                        number_processing_threads = 1, UFA_IP_memeory_variables, allowedMustRunCalculation = FALSE, allowedVerbose = FALSE)
                     ##
                     exECS_annontated_table <- molecular_formula_annotator(IPDB_exECS, spectraList, peaklist, selectedIPApeaks = i_mz, massAccuracy, maxNEME, minPCS,
                                                                           minNDCS, minRCS, scoreCoefficients, RTtolerance = NA, correctedRTpeaklist = NULL,
@@ -696,7 +701,7 @@ UFAx_workflow <- function(spreadsheet) {
         exportSpectraParameters <- NULL
       }
       ##
-      message("Initiated the exhaustive chemical enumeration analysis!!!")
+      IPA_message("Initiated the exhaustive chemical enumeration analysis!!!")
       ##
       ##########################################################################
       ##
@@ -712,18 +717,19 @@ UFAx_workflow <- function(spreadsheet) {
         ##
         osType <- Sys.info()[['sysname']]
         if (osType == "Windows") {
-          clust <- makeCluster(number_processing_threads)
-          registerDoParallel(clust)
           ##
-          exhaustive_chemical_enumeration_annotated_table <- foreach(i_mz = selectedIDpeaklist, .combine = 'rbind', .verbose = FALSE) %dopar% {
+          clust <- makeCluster(number_processing_threads)
+          clusterExport(clust, setdiff(ls(), c("clust", "selectedIDpeaklist")), envir = environment())
+          ##
+          exhaustive_chemical_enumeration_annotated_table <- do.call(rbind, parLapply(clust, selectedIDpeaklist, function(i_mz) {
             exhaustive_chemical_enumeration_call(i_mz)
-          }
+          }))
           ##
           stopCluster(clust)
           ##
           ######################################################################
           ##
-        } else if (osType == "Linux") {
+        } else {
           ##
           exhaustive_chemical_enumeration_annotated_table <- do.call(rbind, mclapply(selectedIDpeaklist, function(i_mz) {
             exhaustive_chemical_enumeration_call(i_mz)
@@ -736,15 +742,15 @@ UFAx_workflow <- function(spreadsheet) {
       ##
       rownames(exhaustive_chemical_enumeration_annotated_table) <- NULL
       if (tolower(exECS0035) == "yes") {
-        message("Initiated searching in the library of molecular formula!!!")
+        IPA_message("Initiated searching in the library of molecular formula!!!")
         MFlibrary <- IDSL.IPA::loadRdata(PubChem_library_path)
         exhaustive_chemical_enumeration_annotated_table <- molecular_formula_library_search(exhaustive_chemical_enumeration_annotated_table, MFlibrary, IonPathways, number_processing_threads)
-        message("Completed searching in the library of molecular formula!!!")
+        IPA_message("Completed searching in the library of molecular formula!!!")
       }
       ##
       save(exhaustive_chemical_enumeration_annotated_table, file = paste0(output_path, "/exhaustive_chemical_enumeration_annotated_table_", MSfileName, ".Rdata"))
       write.csv(exhaustive_chemical_enumeration_annotated_table, file = paste0(output_path, "/exhaustive_chemical_enumeration_annotated_table_", MSfileName, ".csv"), row.names = TRUE)
-      message("Completed the exhaustive chemical enumeration analysis!!!")
+      IPA_message("Completed the exhaustive chemical enumeration analysis!!!")
       required_time <- Sys.time() - initiation_time
       print(required_time)
     }
