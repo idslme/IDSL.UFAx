@@ -22,7 +22,6 @@ You should load the IDSL.UFA package to run the IDSL.UFAx functions.
 }
 \examples{
 \donttest{
-library(IDSL.UFA) # You should load the IDSL.UFA package to run the IDSL.UFAx functions.
 library(IDSL.UFAx)
 s_path <- system.file("extdata", package = "IDSL.UFAx")
 SSh1 <- paste0(s_path,"/UFAx_parameters.xlsx")

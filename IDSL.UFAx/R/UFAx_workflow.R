@@ -14,11 +14,11 @@ UFAx_workflow <- function(spreadsheet) {
   ##
   if (typeof(spreadsheet) == "list") {
     if (ncol(spreadsheet) >= 4) {
-      PARAM <- cbind(spreadsheet[, 2], spreadsheet[, 4])
+      PARAM_exECS <- cbind(spreadsheet[, 2], spreadsheet[, 4])
       checkpoint_parameter <- TRUE
       ##
     } else if (ncol(spreadsheet) == 2) {
-      PARAM <- spreadsheet
+      PARAM_exECS <- spreadsheet
       checkpoint_parameter <- TRUE
       ##
     } else {
@@ -27,8 +27,8 @@ UFAx_workflow <- function(spreadsheet) {
   } else if (typeof(spreadsheet) == "character") {
     if (length(spreadsheet) == 1) {
       if (file.exists(spreadsheet)) {
-        PARAM <- readxl::read_xlsx(spreadsheet, sheet = "exhaustive_chemical_enumeration")
-        PARAM <- cbind(PARAM[, 2], PARAM[, 4])
+        PARAM_exECS <- readxl::read_xlsx(spreadsheet, sheet = "exhaustive_chemical_enumeration")
+        PARAM_exECS <- cbind(PARAM_exECS[, 2], PARAM_exECS[, 4])
         checkpoint_parameter <- TRUE
       } else {
         IPA_message("The `exhaustive_chemical_enumeration` spreadsheet tab not found! It should be an Excel file with .xlsx extention!")
@@ -89,9 +89,9 @@ UFAx_workflow <- function(spreadsheet) {
           checkpoint_parameter <- FALSE
           IPA_message("ERROR!!! Problem with exECS0005! The range of indices are out of the peaklist dimension!")
         } else {
-          IPA_message("The following peak IDs were selected for processing: ")
+          IPA_message("The following peak IDs were selected for processing: ", failedMessage = FALSE)
           for (id in 1:length(selectedIDpeaklist)) {
-            IPA_message(paste0(selectedIDpeaklist[id], " - ", peaklist[selectedIDpeaklist[id], 3],  " - ", peaklist[selectedIDpeaklist[id], 8]))
+            IPA_message(paste0(selectedIDpeaklist[id], " - ", peaklist[selectedIDpeaklist[id], 3],  " - ", peaklist[selectedIDpeaklist[id], 8]), failedMessage = FALSE)
           }
         }
       }
@@ -701,7 +701,7 @@ UFAx_workflow <- function(spreadsheet) {
         exportSpectraParameters <- NULL
       }
       ##
-      IPA_message("Initiated the exhaustive chemical enumeration analysis!!!")
+      IPA_message("Initiated the exhaustive chemical enumeration analysis!!!", failedMessage = FALSE)
       ##
       ##########################################################################
       ##
@@ -742,15 +742,15 @@ UFAx_workflow <- function(spreadsheet) {
       ##
       rownames(exhaustive_chemical_enumeration_annotated_table) <- NULL
       if (tolower(exECS0035) == "yes") {
-        IPA_message("Initiated searching in the library of molecular formula!!!")
+        IPA_message("Initiated searching in the library of molecular formula!!!", failedMessage = FALSE)
         MFlibrary <- IDSL.IPA::loadRdata(PubChem_library_path)
         exhaustive_chemical_enumeration_annotated_table <- molecular_formula_library_search(exhaustive_chemical_enumeration_annotated_table, MFlibrary, IonPathways, number_processing_threads)
-        IPA_message("Completed searching in the library of molecular formula!!!")
+        IPA_message("Completed searching in the library of molecular formula!!!", failedMessage = FALSE)
       }
       ##
       save(exhaustive_chemical_enumeration_annotated_table, file = paste0(output_path, "/exhaustive_chemical_enumeration_annotated_table_", MSfileName, ".Rdata"))
       write.csv(exhaustive_chemical_enumeration_annotated_table, file = paste0(output_path, "/exhaustive_chemical_enumeration_annotated_table_", MSfileName, ".csv"), row.names = TRUE)
-      IPA_message("Completed the exhaustive chemical enumeration analysis!!!")
+      IPA_message("Completed the exhaustive chemical enumeration analysis!!!", failedMessage = FALSE)
       required_time <- Sys.time() - initiation_time
       print(required_time)
     }
